@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    _instanceof:
+        \Swift_Events_SendListener:
+            public: true
+            tags: ['swiftmailer.default.plugin']
+
+    Mindy\Bundle\FormBundle\:
+        resource: '../../*'
+        exclude: '../../{Tests,vendor}'
+
+    Mindy\Bundle\FormBundle\Form\DataTransformer\QuerySetTransformer:
+        public: true

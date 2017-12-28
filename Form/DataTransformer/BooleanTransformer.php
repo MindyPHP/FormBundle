@@ -12,24 +12,16 @@ declare(strict_types=1);
 
 namespace Mindy\Bundle\FormBundle\Form\DataTransformer;
 
-use Mindy\Orm\QuerySetInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 
-/**
- * Class QuerySetTransformer
- */
-class QuerySetTransformer implements DataTransformerInterface
+class BooleanTransformer implements DataTransformerInterface
 {
     /**
      * {@inheritdoc}
      */
     public function transform($value)
     {
-        if ($value instanceof QuerySetInterface) {
-            return $value->all();
-        }
-
-        return $value;
+        return (bool) $value;
     }
 
     /**
@@ -37,6 +29,6 @@ class QuerySetTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
-        return (array) $value;
+        return (int) $value;
     }
 }

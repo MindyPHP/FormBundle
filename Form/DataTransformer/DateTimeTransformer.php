@@ -1,25 +1,47 @@
 <?php
+
+declare(strict_types=1);
+
 /*
- * (c) Studio107 <mail@studio107.ru> http://studio107.ru
- * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * This file is part of Mindy Framework.
+ * (c) 2017 Maxim Falaleev
  *
- * Author: Maxim Falaleev <max@studio107.ru>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Mindy\Bundle\FormBundle\Form\DataTransformer;
 
+use DateTime;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class DateTimeTransformer implements DataTransformerInterface
 {
+    /**
+     * @var string
+     */
+    protected $dateTimeFormat;
+
+    /**
+     * DateTimeTransformer constructor.
+     *
+     * @param string $dateTimeFormat
+     */
+    public function __construct($dateTimeFormat = 'Y-m-d H:i:s')
+    {
+        $this->dateTimeFormat = $dateTimeFormat;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function transform($value)
     {
-        return new \DateTime($value);
+        if ($value instanceof DateTime) {
+            return $value;
+        }
+
+        return new DateTime($value);
     }
 
     /**
@@ -27,6 +49,10 @@ class DateTimeTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
-        return $value;
+        if ($value instanceof DateTime) {
+            return $value->format($this->dateTimeFormat);
+        }
+
+        return (string) $value;
     }
 }

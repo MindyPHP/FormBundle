@@ -1,40 +1,40 @@
 <?php
+
+declare(strict_types=1);
+
 /*
- * (c) Studio107 <mail@studio107.ru> http://studio107.ru
- * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * This file is part of Mindy Framework.
+ * (c) 2017 Maxim Falaleev
  *
- * Author: Maxim Falaleev <max@studio107.ru>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Mindy\Bundle\FormBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType as BaseFileType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class FileType extends AbstractType
 {
     /**
-     * @var RequestStack
+     * @var FileEvent
      */
-    protected $requestStack;
+    protected $event;
 
     /**
      * FileType constructor.
-     * @param RequestStack $requestStack
+     *
+     * @param FileEvent $event
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(FileEvent $event)
     {
-        $this->requestStack = $requestStack;
+        $this->event = $event;
     }
 
     /**
@@ -45,24 +45,46 @@ class FileType extends AbstractType
         return 'mfile';
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    /**
+     * @param array|object $data
+     * @param string       $name
+     *
+     * @return null|string
+     */
+    public function resolveFileUrl($data, string $name)
     {
-        // this will be whatever class/entity is bound to your form (e.g. Media)
-        $formInstance = $form->getParent()->getData();
-        $assetName = isset($options['asset_name']) ? $options['asset_name'] : 'media';
-        $fieldName = $form->getName();
-
-        $fileUrl = null;
-        if (null !== $formInstance) {
-            $fileUrl = PropertyAccess::createPropertyAccessor()->getValue($formInstance, $fieldName);
-            if (false === is_string($fileUrl)) {
-                $fileUrl = '';
+        $value = '';
+        if (null !== $data) {
+            if (is_array($data) && isset($data[$name])) {
+                $value = $data[$name];
+            } elseif (is_object($data) && property_exists($data, $name)) {
+                $value = $data->{$name};
             }
+
+            return is_string($value) ? $value : '';
         }
 
-        // set an "image_url" variable that will be available when rendering this field
-        $view->vars['asset_name'] = $assetName;
-        $view->vars['file_url'] = $fileUrl;
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['asset_name'] = $options['asset_name'];
+
+        $parent = $form->getParent();
+        $view->vars['file_url'] = $parent ?
+            $this->resolveFileUrl($parent->getData(), $form->getName()) :
+            '';
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'asset_name' => '',
+        ]);
     }
 
     /**
@@ -70,22 +92,15 @@ class FileType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($builder) {
-            $params = $this->requestStack->getMasterRequest()->request->all();
-            $parentName = $event->getForm()->getParent()->getName();
-            $formParams = isset($params[$parentName]) ? $params[$parentName] : $params;
-
-            if (
-                isset($formParams[$builder->getName()]) &&
-                $formParams[$builder->getName()] === '__remove'
-            ) {
-                $event->getForm()->setData('');
-            } else if ($event->getData() === null) {
-                $event->getForm()->getParent()->remove($builder->getName());
-            }
-        });
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            $this->event->setFormBuilder($builder)
+        );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParent()
     {
         return BaseFileType::class;

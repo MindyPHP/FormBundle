@@ -10,26 +10,28 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
-        "symfony/form": "~3.0",
-        "mindy/template-bundle": "~3.0"
+        "php": ">=7.0",
+        "symfony/form": "~3.0|~4.0",
+        "mindy/template-bundle": ">=4.0"
     },
     "suggest": {
         "symfony/serializer": "Symfony Serializer Component",
         "mindy/orm-bundle": "Mindy Orm Bundle"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "^6.5",
+        "symfony/framework-bundle": "^3.4",
+        "mindy/orm": ">=4.0",
+        "symfony/var-dumper": "^3.4"
     },
     "autoload": {
         "psr-4": {
             "Mindy\\Bundle\\FormBundle\\": ""
         }
     },
-    "minimum-stability": "dev",
-    "extra": {
-        "branch-alias": {
-            "dev-master": "3.6.8-dev"
+    "autoload-dev": {
+        "psr-4": {
+            "Mindy\\Bundle\\FormBundle\\Tests\\": ""
         }
     }
 }
