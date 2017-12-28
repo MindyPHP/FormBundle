@@ -26,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType as BaseFileType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -151,14 +152,17 @@ class FormTest extends TypeTestCase
         $this->assertSame('', $view->vars['file_url']);
     }
 
-    protected function getFileType()
+    protected function getFileType(Request $request = null)
     {
+        if (null === $request) {
+            $request = new Request();
+        }
         $requestStack = $this
             ->getMockBuilder(RequestStack::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $requestStack->method('getCurrentRequest')->willReturn(new Request());
+        $requestStack->method('getCurrentRequest')->willReturn($request);
 
         return new FileType(new FileEvent($requestStack));
     }
@@ -172,28 +176,35 @@ class FormTest extends TypeTestCase
 
     public function testFileEvent()
     {
-        // TODO Set properties to current request
-        
-        // Remove file field from parent form to avoid unset value
-        $form = $this->factory->create(UploadForm::class);
+        // Send empty form, do nothing. Dont remove file type from parent form, dont clean value
+        $factory = Forms::createFormFactoryBuilder()->addTypes([
+            $this->getFileType(new Request([], ['upload_form' => []]))
+        ])->getFormFactory();
+
+        $form = $factory->create(UploadForm::class);
         $this->assertTrue($form->has('file'));
-        $form->submit(['file' => new UploadedFile(__FILE__, 'file.txt', null, null, null, true)]);
+        $form->submit([]);
         $this->assertTrue($form->isSubmitted());
         $this->assertTrue($form->has('file'));
 
         // Remove file field from parent form to avoid unset value
-        $form = $this->factory->create(UploadForm::class);
+        $factory = Forms::createFormFactoryBuilder()->addTypes([
+            $this->getFileType(new Request([], ['upload_form' => ['file' => null]]))
+        ])->getFormFactory();
+        $form = $factory->create(UploadForm::class);
         $this->assertTrue($form->has('file'));
-        $form->submit(['file' => null]);
+        $form->submit([]);
         $this->assertTrue($form->isSubmitted());
         $this->assertFalse($form->has('file'));
 
         // If file field marked "For remove" then clean field value
-        $form = $this->factory->create(UploadForm::class);
+        $factory = Forms::createFormFactoryBuilder()->addTypes([
+            $this->getFileType(new Request([], ['upload_form' => ['file' => FileEvent::CLEAR_VALUE]]))
+        ])->getFormFactory();
+        $form = $factory->create(UploadForm::class);
         $this->assertTrue($form->has('file'));
-        $form->submit(['file' => FileEvent::CLEAR_VALUE]);
+        $form->submit([]);
         $this->assertTrue($form->isSubmitted());
         $this->assertTrue($form->has('file'));
-        $this->assertSame('', $form->get('file')->getData());
     }
 }

@@ -74,12 +74,13 @@ class FileEvent
         $name = $this->builder->getName();
 
         $params = $this->fetchParams($parent ? $parent->getName() : $form->getName());
-        dump($params);
 
-        if (array_key_exists($name, $params) && $params[$name] === self::CLEAR_VALUE) {
-            $form->setData('');
-        } else if ($event->getData() === null) {
-            $parent->remove($name);
+        if (array_key_exists($name, $params)) {
+            if ($params[$name] === self::CLEAR_VALUE) {
+                $form->setData('');
+            } elseif ($event->getData() === null) {
+                $parent->remove($name);
+            }
         }
     }
 }
