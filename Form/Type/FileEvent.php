@@ -14,7 +14,6 @@ namespace Mindy\Bundle\FormBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -61,6 +60,7 @@ class FileEvent
     public function fetchParams(string $name): array
     {
         $bag = $this->request->request;
+
         return $bag->has($name) ? $bag->get($name, []) : $bag->all();
     }
 

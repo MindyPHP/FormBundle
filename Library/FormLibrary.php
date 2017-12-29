@@ -1,23 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * (c) Studio107 <mail@studio107.ru> http://studio107.ru
- * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * This file is part of Mindy Framework.
+ * (c) 2017 Maxim Falaleev
  *
- * Author: Maxim Falaleev <max@studio107.ru>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Mindy\Bundle\FormBundle\Library;
 
-use Mindy\Template\Library;
+use Mindy\Template\Library\AbstractLibrary;
 use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\FormView;
 
-class FormLibrary extends Library
+class FormLibrary extends AbstractLibrary
 {
+    /**
+     * @var FormRendererInterface
+     */
     protected $renderer;
 
+    /**
+     * FormLibrary constructor.
+     *
+     * @param FormRendererInterface $renderer
+     */
     public function __construct(FormRendererInterface $renderer)
     {
         $this->renderer = $renderer;
@@ -41,14 +51,6 @@ class FormLibrary extends Library
             'form_widget' => [$this, 'widget'],
             'form_humanize' => [$this, 'humanize'],
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getTags()
-    {
-        return [];
     }
 
     /**

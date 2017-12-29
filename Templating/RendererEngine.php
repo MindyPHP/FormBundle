@@ -1,35 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * (c) Studio107 <mail@studio107.ru> http://studio107.ru
- * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * This file is part of Mindy Framework.
+ * (c) 2017 Maxim Falaleev
  *
- * Author: Maxim Falaleev <max@studio107.ru>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Mindy\Bundle\FormBundle\Templating;
 
+use Mindy\Template\TemplateEngine;
 use Symfony\Component\Form\AbstractRendererEngine;
 use Symfony\Component\Form\FormView;
 
-/**
- * @author Bernhard Schussek <bschussek@gmail.com>
- */
-class TemplatingRendererEngine extends AbstractRendererEngine
+class RendererEngine extends AbstractRendererEngine
 {
     /**
-     * @var EngineInterface
+     * @var TemplateEngine
      */
     private $engine;
 
     /**
      * TemplatingRendererEngine constructor.
      *
-     * @param EngineInterface $engine
-     * @param array $defaultThemes
+     * @param TemplateEngine $engine
+     * @param array          $defaultThemes
      */
-    public function __construct(EngineInterface $engine, array $defaultThemes = [])
+    public function __construct(TemplateEngine $engine, array $defaultThemes = [])
     {
         parent::__construct($defaultThemes);
 
@@ -41,22 +41,11 @@ class TemplatingRendererEngine extends AbstractRendererEngine
      */
     public function renderBlock(FormView $view, $resource, $blockName, array $variables = [])
     {
-        return trim($this->engine->render($resource, $variables));
+        return $this->engine->render($resource, $variables);
     }
 
     /**
-     * Loads the cache with the resource for a given block name.
-     *
-     * This implementation tries to load as few blocks as possible, since each block
-     * is represented by a template on the file system.
-     *
-     * @see getResourceForBlock()
-     *
-     * @param string $cacheKey The cache key of the form view
-     * @param FormView $view The form view for finding the applying themes
-     * @param string $blockName The name of the block to load
-     *
-     * @return bool True if the resource could be loaded, false otherwise
+     * {@inheritdoc}
      */
     protected function loadResourceForBlockName($cacheKey, FormView $view, $blockName)
     {
@@ -110,16 +99,17 @@ class TemplatingRendererEngine extends AbstractRendererEngine
     /**
      * Tries to load the resource for a block from a theme.
      *
-     * @param string $cacheKey The cache key for storing the resource
+     * @param string $cacheKey  The cache key for storing the resource
      * @param string $blockName The name of the block to load a resource for
-     * @param mixed $theme The theme to load the block from
+     * @param mixed  $theme     The theme to load the block from
      *
      * @return bool True if the resource could be loaded, false otherwise
      */
-    protected function loadResourceFromTheme($cacheKey, $blockName, $theme)
+    protected function loadResourceFromTheme($cacheKey, $blockName, $theme): bool
     {
         $templateName = sprintf('form/%s/%s.html', $theme, $blockName);
-        if ($this->engine->exists($templateName)) {
+
+        if ($this->engine->getFinder()->find($templateName)) {
             $this->resources[$cacheKey][$blockName] = $templateName;
 
             return true;

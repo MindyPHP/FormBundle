@@ -1,7 +1,7 @@
 # Form Bundle
 
 [![Build Status](https://travis-ci.org/MindyPHP/FormBundle.svg?branch=master)](https://travis-ci.org/MindyPHP/FormBundle)
-[![codecov](https://codecov.io/gh/MindyPHP/MailBundle/branch/master/graph/badge.svg)](https://codecov.io/gh/MindyPHP/MailBundle)
+[![codecov](https://codecov.io/gh/MindyPHP/FormBundle/branch/master/graph/badge.svg)](https://codecov.io/gh/MindyPHP/FormBundle)
 [![Latest Stable Version](https://poser.pugx.org/mindy/form-bundle/v/stable.svg)](https://packagist.org/packages/mindy/form-bundle)
 [![Total Downloads](https://poser.pugx.org/mindy/form-bundle/downloads.svg)](https://packagist.org/packages/mindy/form-bundle)
 

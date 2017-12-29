@@ -22,7 +22,8 @@
         "phpunit/phpunit": "^6.5",
         "symfony/framework-bundle": "^3.4",
         "mindy/orm": ">=4.0",
-        "symfony/var-dumper": "^3.4"
+        "symfony/var-dumper": "^3.4",
+        "symfony/serializer": "^3.4"
     },
     "autoload": {
         "psr-4": {

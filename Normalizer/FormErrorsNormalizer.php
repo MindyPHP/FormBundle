@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 /*
- * (c) Studio107 <mail@studio107.ru> http://studio107.ru
- * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * This file is part of Mindy Framework.
+ * (c) 2017 Maxim Falaleev
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Mindy\Bundle\FormBundle\Normalizer;
@@ -12,10 +16,12 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\SerializerAwareNormalizer;
+use Symfony\Component\Serializer\SerializerAwareTrait;
 
-class FormErrorsNormalizer extends SerializerAwareNormalizer implements NormalizerInterface
+class FormErrorsNormalizer implements NormalizerInterface
 {
+    use SerializerAwareTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -28,7 +34,20 @@ class FormErrorsNormalizer extends SerializerAwareNormalizer implements Normaliz
         return $this->iterateFormErrors($object->getErrors(true, false));
     }
 
-    protected function iterateFormErrors($iterator)
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsNormalization($data, $format = null)
+    {
+        return $data instanceof FormInterface || $data instanceof FormErrorIterator;
+    }
+
+    /**
+     * @param $iterator
+     *
+     * @return array
+     */
+    protected function iterateFormErrors($iterator): array
     {
         $errors = [];
         foreach ($iterator as $error) {
@@ -41,18 +60,5 @@ class FormErrorsNormalizer extends SerializerAwareNormalizer implements Normaliz
         }
 
         return $errors;
-    }
-
-    /**
-     * Checks whether the given class is supported for normalization by this normalizer.
-     *
-     * @param mixed  $data   Data to normalize
-     * @param string $format The format being (de-)serialized from or into
-     *
-     * @return bool
-     */
-    public function supportsNormalization($data, $format = null)
-    {
-        return $data instanceof FormInterface || $data instanceof FormErrorIterator;
     }
 }

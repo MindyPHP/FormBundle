@@ -12,6 +12,3 @@ services:
     Mindy\Bundle\FormBundle\:
         resource: '../../*'
         exclude: '../../{Tests,vendor}'
-
-    Mindy\Bundle\FormBundle\Form\DataTransformer\QuerySetTransformer:
-        public: true

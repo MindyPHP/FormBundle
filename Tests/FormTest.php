@@ -19,6 +19,7 @@ use Mindy\Bundle\FormBundle\Form\Extension\QuerySetExtension;
 use Mindy\Bundle\FormBundle\Form\Extension\TooltipExtension;
 use Mindy\Bundle\FormBundle\Form\Type\FileEvent;
 use Mindy\Bundle\FormBundle\Form\Type\FileType;
+use Mindy\Bundle\FormBundle\Form\Type\SlugType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -29,7 +30,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\TypeTestCase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -171,6 +171,7 @@ class FormTest extends TypeTestCase
     {
         return [
             $this->getFileType(),
+            new SlugType(),
         ];
     }
 
@@ -178,7 +179,7 @@ class FormTest extends TypeTestCase
     {
         // Send empty form, do nothing. Dont remove file type from parent form, dont clean value
         $factory = Forms::createFormFactoryBuilder()->addTypes([
-            $this->getFileType(new Request([], ['upload_form' => []]))
+            $this->getFileType(new Request([], ['upload_form' => []])),
         ])->getFormFactory();
 
         $form = $factory->create(UploadForm::class);
@@ -189,7 +190,7 @@ class FormTest extends TypeTestCase
 
         // Remove file field from parent form to avoid unset value
         $factory = Forms::createFormFactoryBuilder()->addTypes([
-            $this->getFileType(new Request([], ['upload_form' => ['file' => null]]))
+            $this->getFileType(new Request([], ['upload_form' => ['file' => null]])),
         ])->getFormFactory();
         $form = $factory->create(UploadForm::class);
         $this->assertTrue($form->has('file'));
@@ -199,12 +200,25 @@ class FormTest extends TypeTestCase
 
         // If file field marked "For remove" then clean field value
         $factory = Forms::createFormFactoryBuilder()->addTypes([
-            $this->getFileType(new Request([], ['upload_form' => ['file' => FileEvent::CLEAR_VALUE]]))
+            $this->getFileType(new Request([], ['upload_form' => ['file' => FileEvent::CLEAR_VALUE]])),
         ])->getFormFactory();
         $form = $factory->create(UploadForm::class);
         $this->assertTrue($form->has('file'));
         $form->submit([]);
         $this->assertTrue($form->isSubmitted());
         $this->assertTrue($form->has('file'));
+    }
+
+    public function testSlugType()
+    {
+        $slug = new SlugType();
+        $this->assertSame(TextType::class, $slug->getParent());
+
+        $form = $this->factory
+            ->createBuilder(SlugType::class, '/foo/bar')
+            ->getForm();
+
+        $view = $form->createView();
+        $this->assertSame('bar', $view->vars['value']);
     }
 }
