@@ -35,6 +35,7 @@ class FormExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('form.themes', $config['themes']);
+        $formRendererDefinition = $container->getDefinition(RendererEngine::class);
+        $formRendererDefinition->setArgument(1, $config['themes']);
     }
 }
