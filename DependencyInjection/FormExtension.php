@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Mindy\Bundle\FormBundle\DependencyInjection;
 
+use Mindy\Bundle\FormBundle\Templating\RendererEngine;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
