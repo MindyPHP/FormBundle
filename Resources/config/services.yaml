@@ -5,6 +5,10 @@ services:
         public: false
 
     _instanceof:
+        Mindy\Template\Library\LibraryInterface:
+            public: true
+            tags: ['template.library']
+
         \Swift_Events_SendListener:
             public: true
             tags: ['swiftmailer.default.plugin']
