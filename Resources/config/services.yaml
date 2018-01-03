@@ -16,3 +16,6 @@ services:
     Mindy\Bundle\FormBundle\:
         resource: '../../*'
         exclude: '../../{Tests,vendor}'
+
+    Symfony\Component\Form\FormRenderer:
+        public: true
