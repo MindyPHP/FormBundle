@@ -9,13 +9,29 @@ services:
             public: true
             tags: ['template.library']
 
-        \Swift_Events_SendListener:
-            public: true
-            tags: ['swiftmailer.default.plugin']
+        Mindy\Bundle\FormBundle\Form\Extension\CheckboxExtension:
+            tags:
+                - { name: 'form.type_extension', extended_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType }
+
+        Mindy\Bundle\FormBundle\Form\Extension\HelpExtension:
+            tags:
+                - { name: 'form.type_extension', extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
+
+        Mindy\Bundle\FormBundle\Form\Extension\QuerySetExtension:
+            tags:
+                - { name: 'form.type_extension', extended_type: Symfony\Component\Form\Extension\Core\Type\ChoiceType }
+
+        Mindy\Bundle\FormBundle\Form\Extension\TooltipExtension:
+            tags:
+                - { name: 'form.type_extension', extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
 
     Mindy\Bundle\FormBundle\:
         resource: '../../*'
         exclude: '../../{Tests,vendor}'
+
+    Mindy\Bundle\FormBundle\Form\Type\:
+        resource: '../../Form/Type/*'
+        tags: ['form.type']
 
     Symfony\Component\Form\FormRenderer:
         public: true

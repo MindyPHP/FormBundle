@@ -3,6 +3,12 @@
     "type": "symfony-bundle",
     "description": "Mail bundle",
     "license": "MIT",
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
     "authors": [
         {
             "name": "Falaleev Maxim",
