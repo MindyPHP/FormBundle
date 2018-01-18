@@ -41,7 +41,7 @@ class DateTimeTransformer implements DataTransformerInterface
             return $value;
         }
 
-        return new DateTime($value);
+        return new DateTime((string)$value);
     }
 
     /**
