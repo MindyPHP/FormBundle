@@ -1,0 +1,17 @@
+<div class="form-tab">
+    <div class="form-tab-header">
+        {% for i, tab in form %}
+            <div data-tab="{{ i }}"
+                 class="form-tab-tab{% if loop.first %} active{% endif %}">{{ tab.vars.tab|trans([], translation_domain) }}</div>
+        {% endfor %}
+    </div>
+
+    {% for i, tab in form %}
+        <div data-tab="{{ i }}"
+             class="form-content{% if loop.first %} active{% endif %}">
+            {% for child in tab %}
+                {{ form_row(child)|safe }}
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>

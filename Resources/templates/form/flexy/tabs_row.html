@@ -1,0 +1,17 @@
+<div class="b-tab">
+    <div class="b-tab__header">
+        {% for i, tab in form %}
+            <div data-tab="{{ i }}"
+                 class="b-tab__tab{% if loop.first %} b-tab__tab_active{% endif %}">{{ tab.vars.tab|trans([], translation_domain) }}</div>
+        {% endfor %}
+    </div>
+
+    {% for i, tab in form %}
+        <div data-tab="{{ i }}"
+             class="b-tab__content{% if loop.first %} b-tab__content_active{% endif %}">
+            {% for child in tab %}
+                {{ form_row(child)|safe }}
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>

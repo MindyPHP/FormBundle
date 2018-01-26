@@ -3,8 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Mindy Framework.
- * (c) 2017 Maxim Falaleev
+ * Studio 107 (c) 2018 Maxim Falaleev
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -76,9 +75,9 @@ class FileEvent
         $params = $this->fetchParams($parent ? $parent->getName() : $form->getName());
 
         if (array_key_exists($name, $params)) {
-            if ($params[$name] === self::CLEAR_VALUE) {
+            if (self::CLEAR_VALUE === $params[$name]) {
                 $form->setData('');
-            } elseif ($event->getData() === null) {
+            } elseif (null === $event->getData()) {
                 $parent->remove($name);
             }
         }

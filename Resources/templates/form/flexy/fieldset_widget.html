@@ -1,0 +1,6 @@
+<fieldset class="b-fieldset">
+    {% if legend %}
+        <legend class="b-fieldset__legend">{{ legend|trans([], translation_domain) }}</legend>
+    {% endif %}
+    {{ form_widget(form)|safe }}
+</fieldset>
