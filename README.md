@@ -137,3 +137,24 @@ Resources
             ]);
     }
 ```
+
+
+### ButtonsType
+
+```php
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('buttons', ButtonsType::class, [
+                'buttons' => function (FormBuilderInterface $builder) {
+                    $builder
+                        ->add('submit', SubmitType::class, [
+                            'label' => 'Сохранить',
+                        ])
+                        ->add('submit_create', SubmitType::class, [
+                            'label' => 'Сохранить и создать',
+                        ]);
+                }
+            ])
+    }
+```
