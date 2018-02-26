@@ -83,6 +83,7 @@ class FileType extends AbstractType
     {
         $resolver->setDefaults([
             'asset_name' => '',
+            'data_class' => null,
         ]);
     }
 
